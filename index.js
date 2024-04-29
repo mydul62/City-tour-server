@@ -48,7 +48,13 @@ async function run() {
       const result = await tourismCollection.find({ useremail: email }).toArray();
       res.send(result);
     });
-    
+    app.delete("/tourisms/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; 
+      const result = await tourismCollection.deleteOne(query);
+      
+      res.send(result);
+    });
     const database = client.db("insertDB");
     const tourismCollection = database.collection("tourism");
     app.post('/tourisms',async(req,res)=>{
