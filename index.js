@@ -26,9 +26,16 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-
+    const database = client.db("insertDB");
+    const tourismCollection = database.collection("tourism");
+    const CountryCollections = database.collection("country");
     app.get("/tourisms", async (req, res) => {
       const cursor = tourismCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/country/countrys", async (req, res) => {
+      const cursor = CountryCollections.find();
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -83,8 +90,7 @@ async function run() {
         res.send(result)
     });
 
-    const database = client.db("insertDB");
-    const tourismCollection = database.collection("tourism");
+
     app.post("/tourisms", async (req, res) => {
       const tourism = req.body;
       const result = await tourismCollection.insertOne(tourism);
