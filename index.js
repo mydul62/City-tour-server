@@ -29,6 +29,12 @@ async function run() {
     const database = client.db("insertDB");
     const tourismCollection = database.collection("tourism");
     const CountryCollections = database.collection("country");
+    const reviewCollections = database.collection("review");
+    app.get("/review", async (req, res) => {
+      const cursor = reviewCollections.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
     app.get("/tourisms", async (req, res) => {
       const cursor = tourismCollection.find();
       const result = await cursor.toArray();
@@ -37,6 +43,13 @@ async function run() {
     app.get("/country/countrys", async (req, res) => {
       const cursor = CountryCollections.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/tourisms/email/country/:countryname", async (req, res) => {
+      const countryname = req.params.countryname;
+      const result = await tourismCollection
+        .find({ countryname: countryname })
+        .toArray();
       res.send(result);
     });
     app.get("/tourisms/:id", async (req, res) => {
@@ -48,9 +61,7 @@ async function run() {
     app.get("/tourisms/email/:useremail", async (req, res) => {
       console.log(req.params);
       const email = req.params.useremail;
-      const result = await tourismCollection
-        .find({ useremail: email })
-        .toArray();
+      const result = await tourismCollection.find({ useremail: email }).toArray();
       res.send(result);
     });
     app.delete("/tourisms/:id", async (req, res) => {
@@ -64,32 +75,33 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const updatedTourism = req.body;
-        const options = {upsert: true}
-        const tourism = {
-           $set:{
-            Touristsportname:updatedTourism.Touristsportname,
-           Rating:updatedTourism.Rating,
-           averagecost:updatedTourism.averagecost,
-           countryname:updatedTourism.countryname,
-           location:updatedTourism.location,
-           photoURL1:updatedTourism.photoURL1,
-           photoURL2:updatedTourism.photoURL2,
-           photoURL3:updatedTourism.photoURL3,
-           photoURL4:updatedTourism.photoURL4,
-           seasonality:updatedTourism.seasonality,
-           shortdescription:updatedTourism.shortdescription,
-           totalVisitorsPerYear:updatedTourism.totalVisitorsPerYear,
-           traveltime:updatedTourism.traveltime,
-           useremail:updatedTourism.useremail
-           
-           }
-          
-        } 
-        console.log(id);
-        const result = await tourismCollection.updateOne(filter,tourism,options)
-        res.send(result)
+      const options = { upsert: true };
+      const tourism = {
+        $set: {
+          Touristsportname: updatedTourism.Touristsportname,
+          Rating: updatedTourism.Rating,
+          averagecost: updatedTourism.averagecost,
+          countryname: updatedTourism.countryname,
+          location: updatedTourism.location,
+          photoURL1: updatedTourism.photoURL1,
+          photoURL2: updatedTourism.photoURL2,
+          photoURL3: updatedTourism.photoURL3,
+          photoURL4: updatedTourism.photoURL4,
+          seasonality: updatedTourism.seasonality,
+          shortdescription: updatedTourism.shortdescription,
+          totalVisitorsPerYear: updatedTourism.totalVisitorsPerYear,
+          traveltime: updatedTourism.traveltime,
+          useremail: updatedTourism.useremail,
+        },
+      };
+      console.log(id);
+      const result = await tourismCollection.updateOne(
+        filter,
+        tourism,
+        options
+      );
+      res.send(result);
     });
-
 
     app.post("/tourisms", async (req, res) => {
       const tourism = req.body;
