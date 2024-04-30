@@ -7,8 +7,6 @@ app.use(cors());
 app.use(express.json());
 
 require("dotenv").config();
-//tourist-manage
-//xnIjTHyruE37e1oR
 const port = 5000;
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xm07hcd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -25,17 +23,25 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const database = client.db("insertDB");
     const tourismCollection = database.collection("tourism");
     const CountryCollections = database.collection("country");
     const reviewCollections = database.collection("review");
+    app.get("/",(req,res)=>{
+     res.send("tourism website")
+    })
     app.get("/review", async (req, res) => {
       const cursor = reviewCollections.find();
       const result = await cursor.toArray();
       res.send(result);
     });
     app.get("/tourisms", async (req, res) => {
+      const cursor = tourismCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/tourisms/tourism", async (req, res) => {
       const cursor = tourismCollection.find();
       const result = await cursor.toArray();
       res.send(result);
@@ -110,7 +116,7 @@ async function run() {
       console.log(tourism);
     });
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
